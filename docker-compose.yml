@@ -10,10 +10,18 @@ services:
       driver: syslog
     networks:
       - dolibridge
-    restart: unless-stopped
     volumes:
       - "/opt/dolidocker/mariadb/data:/var/lib/mysql"
       - "/opt/dolidocker/mariadb/conf.d:/etc/mysql/conf.d"
+
+  dolipma:
+    image: phpmyadmin:latest
+    ports:
+        - 13880:80
+    environment:
+        - PMA_HOST=dolimariadb
+        - PMA_PORT=3306
+    restart: unless-stopped
 
   doliphp:
     image: php:fpm-alpine
