@@ -16,12 +16,15 @@ services:
 
   dolipma:
     image: phpmyadmin:latest
-    ports:
-        - 13880:80
-    environment:
-        - PMA_HOST=dolimariadb
-        - PMA_PORT=3306
+    container_name: dolipma
     restart: unless-stopped
+    ports:
+      - 13880:80
+    environment:
+      - PMA_HOST=dolimariadb
+      - PMA_PORT=3306
+    networks:
+      - dolibridge
 
   doliphp:
     image: php:fpm-alpine
