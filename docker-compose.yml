@@ -5,7 +5,7 @@ services:
     container_name: dolimariadb
     restart: unless-stopped
     environment:
-      MARIADB_ROOT_PASSWORD: AT3eZvcda2frR4F3qGgQLbDV
+      MARIADB_ROOT_PASSWORD: <change_me>
     logging:
       driver: syslog
     networks:
