@@ -11,8 +11,8 @@ services:
     networks:
       - dolibridge
     volumes:
-      - "/opt/dolidocker/mariadb/data:/var/lib/mysql"
-      - "/opt/dolidocker/mariadb/conf.d:/etc/mysql/conf.d"
+      - /opt/dolidocker/mariadb/data:/var/lib/mysql
+      - /opt/dolidocker/mariadb/conf.d:/etc/mysql/conf.d
 
   dolipma:
     image: phpmyadmin:latest
@@ -27,12 +27,15 @@ services:
       - dolibridge
 
   doliphp:
-    image: php:fpm-alpine
     container_name: doliphp
+    build:
+      context: .
+      dockerfile: dockerfile_php
+#    image: php:7-fpm-alpine
     networks:
       - dolibridge
     volumes:
-      - "/opt/dolidocker/nginx/www:/script:ro"
+      - /opt/dolidocker/nginx/www/htdocs:/script:ro
 
   dolinginx:
     image: nginx:stable-alpine
@@ -44,11 +47,11 @@ services:
     networks:
       - dolibridge
     volumes:
-      - "/opt/dolidocker/nginx/www:/usr/share/nginx/html"
-      - "/opt/dolidocker/nginx/log:/var/log/nginx"
-      - "/opt/dolidocker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro"
+      - /opt/dolidocker/nginx/www/htdocs:/usr/share/nginx/html
+      - /opt/dolidocker/nginx/log:/var/log/nginx
+      - /opt/dolidocker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
-      - "3880:80"
+      - 3880:80
 
 networks:
   dolibridge:
