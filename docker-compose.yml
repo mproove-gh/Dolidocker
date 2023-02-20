@@ -5,7 +5,7 @@ services:
     container_name: dolimariadb
     restart: unless-stopped
     environment:
-      MARIADB_ROOT_PASSWORD: <change_me>
+      MARIADB_ROOT_PASSWORD: AT3eZvcda2frR4F3qGgQLbDV
     logging:
       driver: syslog
     networks:
@@ -46,14 +46,25 @@ services:
       - doliphp
     networks:
       - dolibridge
+      - traefik
     volumes:
       - /opt/dolidocker/nginx/www/htdocs:/usr/share/nginx/html
       - /opt/dolidocker/nginx/log:/var/log/nginx
       - /opt/dolidocker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-    ports:
-      - 3880:80
+#    ports:
+#      - 3880:80
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dolinginx.entrypoints=websecure,web"
+      - "traefik.http.routers.dolinginx.rule=Host(`dolitest.mproove.net`)"      
+      - "traefik.http.routers.dolinginx.tls=true"
+      - "traefik.http.routers.dolinginx.tls.certresolver=lets-encrypt"
+      - "traefik.http.services.dolinginx.loadbalancer.server.port=80"
 
 networks:
   dolibridge:
     name: dolibridge
+  traefik:
+    name: traefik
+    external: true
 
