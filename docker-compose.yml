@@ -1,11 +1,23 @@
 version: '3.8'
+
+secrets:
+  mariadb_root_password:
+    file: ./secret.mariadb_root_password
+  mariadb_db_user:
+    file: ./secret.mariadb_db_user
+  mariadb_db_user_password:
+    file: ./secret.mariadb_db_user_password
+
 services:
   dolimariadb:
     image: mariadb:10.6
     container_name: dolimariadb
     restart: unless-stopped
     environment:
-      MARIADB_ROOT_PASSWORD: AT3eZvcda2frR4F3qGgQLbDV
+      MARIADB_ROOT_PASSWORD_FILE: /run/secrets/mariadb_root_password
+      MARIADB_DATABASE: dolibarr
+      MARIADB_USER_FILE: /run/secrets/mariadb_db_user
+      MARIADB_PASSWORD_FILE: /run/secrets/mariadb_db_user_password
     logging:
       driver: syslog
     networks:
@@ -13,6 +25,11 @@ services:
     volumes:
       - /opt/dolidocker/mariadb/data:/var/lib/mysql
       - /opt/dolidocker/mariadb/conf.d:/etc/mysql/conf.d
+    secrets:
+      - mariadb_root_password
+      - mariadb_db_user
+      - mariadb_db_user_password
+
 
   dolipma:
     image: phpmyadmin:latest
@@ -31,7 +48,6 @@ services:
     build:
       context: .
       dockerfile: dockerfile_php
-#    image: php:7-fpm-alpine
     networks:
       - dolibridge
     volumes:
