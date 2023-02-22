@@ -49,3 +49,8 @@ RUN apk add --no-cache \
     && docker-php-ext-install imap \
     && docker-php-ext-enable imap \
     && rm -rf /tmp/*
+
+# Install mysqli extension
+RUN docker-php-ext-install -j$(nproc) mysqli \
+    && docker-php-ext-enable mysqli \
+    && rm -rf /tmp/*
