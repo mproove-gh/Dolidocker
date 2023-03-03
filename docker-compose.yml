@@ -29,7 +29,8 @@ services:
       - mariadb_root_password
       - mariadb_db_user
       - mariadb_db_user_password
-
+    profiles:
+      - main
 
   dolipma:
     image: phpmyadmin:latest
@@ -42,7 +43,7 @@ services:
       - dolibridge
       - traefik
     profiles:
-      - dontstart
+      - pma
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.dolipma.entrypoints=websecure,web"
@@ -61,6 +62,8 @@ services:
       - dolibridge
     volumes:
       - /opt/dolidocker/nginx/www/htdocs:/script
+    profiles:
+      - main
 
   dolinginx:
     image: nginx:stable-alpine
@@ -76,6 +79,8 @@ services:
       - /opt/dolidocker/nginx/www/htdocs:/usr/share/nginx/html
       - /opt/dolidocker/nginx/log:/var/log/nginx
       - /opt/dolidocker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    profiles:
+      - main
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.dolinginx.entrypoints=websecure,web"
