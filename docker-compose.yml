@@ -35,14 +35,14 @@ services:
     image: phpmyadmin:latest
     container_name: dolipma
     restart: unless-stopped
-#    ports:
-#      - 13880:80
     environment:
       - PMA_HOST=dolimariadb
       - PMA_PORT=3306
     networks:
       - dolibridge
       - traefik
+    profiles:
+      - dontstart
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.dolipma.entrypoints=websecure,web"
@@ -76,9 +76,6 @@ services:
       - /opt/dolidocker/nginx/www/htdocs:/usr/share/nginx/html
       - /opt/dolidocker/nginx/log:/var/log/nginx
       - /opt/dolidocker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-# --- No port forwarding because the service will be exposed through traefik proxy
-#    ports:
-#      - 3880:80
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.dolinginx.entrypoints=websecure,web"
