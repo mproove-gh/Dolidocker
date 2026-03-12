@@ -1,6 +1,9 @@
 FROM php:7-fpm-alpine
 WORKDIR "/application"
 
+# Installation de l'utilitaire fcgi pour le healthcheck
+RUN apk add --no-cache fcgi
+
 # Setup GD extension
 RUN apk add --no-cache \
       freetype \
