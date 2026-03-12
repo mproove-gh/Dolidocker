@@ -10,9 +10,15 @@ secrets:
 
 services:
   dolimariadb:
-    image: mariadb:10.6
+    image: mariadb:10.11
     container_name: dolimariadb
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "-u", "root", "-p$$MARIADB_ROOT_PASSWORD"]
+      interval: 10s    # Temps entre chaque test
+      timeout: 5s     # Temps max accordé au test pour répondre
+      retries: 5      # Nombre d'échecs avant de déclarer le service "unhealthy"
+      start_period: 30s # Temps de grâce pour laisser la BDD s'initialiser au premier démarrage    
     environment:
       MARIADB_ROOT_PASSWORD_FILE: /run/secrets/mariadb_root_password
       MARIADB_DATABASE: dolibarr
@@ -56,6 +62,15 @@ services:
     build:
       context: .
       dockerfile: dockerfile_php
+    restart: unless-stopped
+    healthcheck:
+      # SCRIPT_NAME=/status est le défaut pour interroger le pool FPM
+      # SCRIPT_FILENAME est requis par certaines versions de FPM pour répondre
+      test: ["CMD", "cgi-fcgi", "-bind", "-connect", "localhost:9000"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
     networks:
       - dolibridge
     volumes:
@@ -66,8 +81,10 @@ services:
     container_name: dolinginx
     restart: unless-stopped
     depends_on:
-      - dolimariadb
-      - doliphp
+      dolimariadb:
+        condition: service_healthy
+      doliphp:
+        condition: service_healthy
     networks:
       - dolibridge
       - traefik
